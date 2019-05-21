@@ -1,32 +1,34 @@
 import 'package:flutter/material.dart';
+import '../blocs/provider.dart';
 import '../blocs/bloc.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final bloc = Provider.of(context);
+
     return Container(
       margin: EdgeInsets.all(20.0),
       child: Column(
         children: <Widget>[
-          emailField(),
-          passwordField(),
+          emailField(bloc),
+          passwordField(bloc),
           Container(margin: EdgeInsets.only(bottom: 15.0)),
-          submitButton(),
+          submitButton(bloc),
         ],
       ),
     );
   }
 
-  Widget emailField() {
+  Widget emailField(Bloc bloc) {
     return StreamBuilder(
       stream: bloc.email,
       builder: (context, snapshot) {
         return TextField(
           decoration: InputDecoration(
-            errorText: snapshot.error,
-            hintText: 'mail@example.com',
-            labelText: 'Email Address'
-          ),
+              errorText: snapshot.error,
+              hintText: 'mail@example.com',
+              labelText: 'Email Address'),
           keyboardType: TextInputType.emailAddress,
           onChanged: bloc.changeEmail,
         );
@@ -34,7 +36,7 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Widget passwordField() {
+  Widget passwordField(Bloc bloc) {
     return StreamBuilder(
       stream: bloc.password,
       builder: (context, snapshot) {
@@ -51,12 +53,21 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Widget submitButton() {
-    return RaisedButton(
-      child: Text('Log In'),
-      color: Colors.blue,
-      onPressed: () {},
-      textColor: Colors.white,
+  Widget submitButton(Bloc bloc) {
+    return StreamBuilder(
+      stream: bloc.submitValid,
+      builder: (context, snapshot) {
+        return RaisedButton(
+          child: Text('Log In'),
+          color: Colors.blue,
+          onPressed: snapshot.hasData
+              ? () {
+                  print('Hi there!');
+                }
+              : null,
+          textColor: Colors.white,
+        );
+      },
     );
   }
 }
